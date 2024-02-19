@@ -22,7 +22,7 @@ class LLM:
     def __init__(self, llm_type=LLMType.OPENAI, model=Models.GPT3):
         self.type = llm_type
         self.model = model
-        self.openai_key = os.getenv('OPENAI_KEY')
+        self.openai_key = os.getenv('OPENAI_API_KEY')
         self.claude_key = os.getenv('ANTHROPIC_KEY')
 
     def chat(self, message, functions=None):

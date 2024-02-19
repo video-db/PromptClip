@@ -8,13 +8,14 @@ from videodb import connect
 import utils
 from llm_agent import LLM, LLMType
 
+load_dotenv()
+
 
 def get_connection():
     """
     Get connection and load the env.
     :return:
     """
-    load_dotenv()
     conn = connect()
     return conn
 
@@ -45,7 +46,7 @@ def timestamp_parser(resp):
     e_values = [float(e) for e in e_values]
 
     # Put together in a list as timestamps
-    timestamps = [{'s': s, 'e': e} for s, e in zip(s_values, e_values)]
+    timestamps = [{"s": s, "e": e} for s, e in zip(s_values, e_values)]
     return timestamps
 
 
@@ -57,7 +58,7 @@ def chunk_transcript(docs, chunk_size):
     :return:
     """
     for i in range(0, len(docs), chunk_size):
-        yield docs[i:i + chunk_size]  # Yield the current chunk
+        yield docs[i : i + chunk_size]  # Yield the current chunk
 
 
 def send_msg_openAI(chunk_prompt, llm):
@@ -74,7 +75,9 @@ def send_msg_claude(chunk_prompt, llm):
 
 def video_prompter(video, prompt, llm=LLM()):
     timestamps = []
-    windowed_transcript = utils.get_windowed_transcript(transcript=video.get_transcript())
+    windowed_transcript = utils.get_windowed_transcript(
+        transcript=video.get_transcript()
+    )
 
     # 400 sentence at a time
     if llm.type == LLMType.OPENAI:
@@ -90,7 +93,7 @@ def video_prompter(video, prompt, llm=LLM()):
     prompts = []
     i = 0
     for chunk in chunks:
-        if i>2:
+        if i > 2:
             break
         chunk_prompt = """
         Create a compilation based on video transcript chunks, where 'video' and 'chunks' are used interchangeably. 
@@ -127,7 +130,9 @@ def video_prompter(video, prompt, llm=LLM()):
         i += 1
 
     with concurrent.futures.ThreadPoolExecutor() as executor:
-        future_to_index = {executor.submit(llm_caller_fn, prompt, llm): prompt for prompt in prompts}
+        future_to_index = {
+            executor.submit(llm_caller_fn, prompt, llm): prompt for prompt in prompts
+        }
         for future in concurrent.futures.as_completed(future_to_index):
             try:
                 timestamps.extend(future.result())
