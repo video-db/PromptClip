@@ -34,7 +34,7 @@
 
 It allows any developer to:
 
-* 📚 Upload a video from any source (Youtube etc.)
+* 📚 Upload a video from any source (Local Files, Youtube, S3 etc.)
 * 🔍 Prompt that video in natural language with queries like `Show funny moments in the video`
   or `find the moments useful for social media trailer`
 * 🎛️ Use any LLM of your choice like OpenAI, Claude or Gemeni Pro.
@@ -49,7 +49,7 @@ Checkout these prompts and the results 👉🏼
 
 | Original Video                                                                                   | Prompt                                                                                    | Link                                                                                                                           |
 |--------------------------------------------------------------------------------------------------|-------------------------------------------------------------------------------------------|--------------------------------------------------------------------------------------------------------------------------------|
-| [Shark Tank](https://www.youtube.com/watch?v=)                                                   | Find every moment where a deal was offered                                                | [watch](https://console.videodb.io/player?url=https://stream.videodb.io/v3/published/manifests/46c983a6-7b73-4876-8082-5dc79ecbb972.m3u8) |
+| [Shark Tank](https://www.youtube.com/watch?v=HpUR7-Oe1ss)                                                   | Find every moment where a deal was offered                                                | [watch](https://console.videodb.io/player?url=https://stream.videodb.io/v3/published/manifests/46c983a6-7b73-4876-8082-5dc79ecbb972.m3u8) |
 | [Useful Gadgets](https://www.youtube.com/watch?v=bGmXrMW9ucU)                                   | Show me moments in the video where the host discusses or reveals the pricing of the gadgets | [watch](https://console.videodb.io/player?url=https://stream.videodb.io/v3/published/manifests/5c4f4752-eca4-4f76-9d68-1a855d75de88.m3u8) |
 | [Sponsorship Details of Huberman Podcast](https://www.youtube.com/watch?v=LYYyQcAJZfk)          | Find details about every sponsor                                                          | [watch](https://console.videodb.io/player?url=https://stream.videodb.io/v3/published/manifests/588bbe2f-1f14-4a9f-b62f-7f1132eed3f2.m3u8) |
 | [Highlights from Masterchef Episode](https://www.youtube.com/watch?v=4JVzznqOF0k)                          | Show me the feedback from every judge                                                     | [watch](https://console.videodb.io/player?url=https://stream.videodb.io/v3/published/manifests/33b3e620-ca32-4895-847b-8aaf7cbf1e74.m3u8) |
