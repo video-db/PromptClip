@@ -55,7 +55,7 @@ Checkout these prompts and the results 👉🏼
 | [Highlights from Masterchef Episode](https://www.youtube.com/watch?v=4JVzznqOF0k)                          | Show me the feedback from every judge                                                     | [watch](https://console.videodb.io/player?url=https://stream.videodb.io/v3/published/manifests/33b3e620-ca32-4895-847b-8aaf7cbf1e74.m3u8) |
 | [Important Topics/Advice from a Lecture](https://www.youtube.com/watch?v=HAnw168huqA)           | Find sentences where anxiety is discussed                                                 | [watch](https://console.videodb.io/player?url=https://stream.videodb.io/v3/published/manifests/61203892-7607-4089-8302-dd802efe183e.m3u8) |
 | [Tech Review Video](https://www.youtube.com/watch?v=dtp6b76pMak)                                 | Find sentences where host explains about the battery                                      | [watch](https://console.videodb.io/player?url=https://stream.videodb.io/v3/published/manifests/e6ce8133-ed7d-4dad-a070-ead778a0d2d3.m3u8) |
-| [Travel Video](https://www.youtube.com/watch?v=sV1Z2LXtHqc)                                     | what are some popular tourist destinations in Sri Lanka                                   | [watch](https://console.videodb.io/player?url=https://stream.videodb.io/v3/published/manifests/36aba200-e4e6-40c0-aa45-8eafdf844fe0.m3u8) |
+| [Travel Video](https://www.youtube.com/watch?v=sV1Z2LXtHqc)                                     | What are some popular tourist destinations in Sri Lanka                                   | [watch](https://console.videodb.io/player?url=https://stream.videodb.io/v3/published/manifests/36aba200-e4e6-40c0-aa45-8eafdf844fe0.m3u8) |
 
 ## How do I use it? 🛠️
 
