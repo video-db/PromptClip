@@ -62,7 +62,7 @@ Checkout these prompts and the results 👉🏼
 - **Get your API key:** Sign up on [VideoDB console](https://console.videodb.io) (Free for the first 50 uploads, no
   credit card required). 🆓
 - **Set `VIDEO_DB_API_KEY`:** Enter your key in the `env` file.
-- **Set `OPENAI_KAY` or `ANTHROPIC_KEY`:** Add your LLM API Key in the `env` file.
+- **Set `OPENAI_API_KEY` or `ANTHROPIC_KEY`:** Add your LLM API Key in the `env` file.
 - **Install dependencies:** Run `pip install -r requirements.txt` in your terminal.
 - **Run locally:**  Run the notebook `PromptClip.ipynb` and experiment with your prompts and ranking of results.
 
