@@ -1,36 +1,43 @@
-""""
+""" "
 Extend this codebase to add any LLM
 """
+
 import json
 import os
 
 import requests
 from anthropic import Anthropic, HUMAN_PROMPT, AI_PROMPT
+import google.generativeai as genai
 from dotenv import load_dotenv
 
 load_dotenv()
-OPENAI_KEY = os.getenv('OPENAI_API_KEY')
-CLAUDE_KEY = os.getenv('ANTHROPIC_KEY')
+OPENAI_KEY = os.getenv("OPENAI_API_KEY")
+CLAUDE_KEY = os.getenv("ANTHROPIC_KEY")
+GEMINI_KEY = os.getenv("GEMINI_API_KEY")
 
 
 class LLMType:
-    OPENAI = 'openAI'
-    CLAUDE = 'claude'
+    OPENAI = "openAI"
+    CLAUDE = "claude"
+    GEMINI = "gemini"
 
 
 class Models:
-    GPT3 = 'gpt-3.5-turbo-16k'
-    GPT4 = 'gpt-4'
-    CLAUDE_INSTANT = 'claude-instant-1.1'
-    CLAUDE2 = 'claude-2'
+    GPT3 = "gpt-3.5-turbo-16k"
+    GPT4 = "gpt-4"
+    CLAUDE_INSTANT = "claude-instant-1.1"
+    CLAUDE2 = "claude-2"
+    GEMINI_1_5_FLASH = "gemini-1.5-flash"
+    GEMINI_1_5_PRO = "gemini-1.5-pro"
 
 
 class LLM:
     def __init__(self, llm_type=LLMType.OPENAI, model=Models.GPT4):
         self.type = llm_type
         self.model = model
-        self.openai_key = os.getenv('OPENAI_API_KEY')
-        self.claude_key = os.getenv('ANTHROPIC_KEY')
+        self.openai_key = os.getenv("OPENAI_API_KEY")
+        self.claude_key = os.getenv("ANTHROPIC_KEY")
+        self.gemini_key = os.getenv("GEMINI_KEY")
 
     def chat(self, message, functions=None):
         if self.type == LLMType.OPENAI:
@@ -38,6 +45,8 @@ class LLM:
             return self._call_openai(message, functions)
         elif self.type == LLMType.CLAUDE:
             return self._call_claude(message)
+        elif self.type == LLMType.GEMINI:
+            return self._call_gemini(message)
         else:
             raise ValueError("Unsupported LLM type.")
 
@@ -50,28 +59,23 @@ class LLM:
         context_msg = ""
         context_msg += str(data)
 
-        return {
-            "role": 'system',
-            "content": context_msg
-        }
+        return {"role": "system", "content": context_msg}
 
     def _call_openai(self, message, functions=None):
-        url = 'https://api.openai.com/v1/chat/completions'
+        url = "https://api.openai.com/v1/chat/completions"
         # print(f'call openAI with message {message}')
         headers = {
-            'Content-Type': 'application/json',
-            'Authorization': f'Bearer {self.openai_key}'
+            "Content-Type": "application/json",
+            "Authorization": f"Bearer {self.openai_key}",
         }
-        data = {
-            "model": self.model,
-            "messages": message,
-            "temperature": 0.6
-        }
+        data = {"model": self.model, "messages": message, "temperature": 0.6}
         if functions:
-            data.update({
-                "functions": functions,
-                "function_call": 'auto',
-            })
+            data.update(
+                {
+                    "functions": functions,
+                    "function_call": "auto",
+                }
+            )
 
         response = requests.post(url, headers=headers, data=json.dumps(data))
         try:
@@ -89,7 +93,21 @@ class LLM:
                 prompt=prompt,
             )
             return {"response": completion.completion}
-        except Exception as e:  # Consider a more specific exception based on the Anthropic SDK
+        except (
+            Exception
+        ) as e:  # Consider a more specific exception based on the Anthropic SDK
+            return {"error": str(e)}
+
+    def _call_gemini(self, message):
+        genai.configure(api_key=GEMINI_KEY)
+        model = genai.GenerativeModel(self.model)
+        response = model.generate_content("The opposite of hot is")
+        try:
+            response = model.generate_content(message)
+            response_text = response.text.replace("```json", "").replace("```", "")
+            response_json = json.loads(response_text)
+            return response_json.get("sentences")
+        except Exception as e:
             return {"error": str(e)}
 
     def get_word_limit(self):

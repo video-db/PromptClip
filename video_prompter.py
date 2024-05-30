@@ -52,6 +52,10 @@ def send_msg_claude(chunk_prompt, llm):
     # TODO : add claude reposnse parser
     return response
 
+def send_msg_gemini(chunk_prompt, llm):
+    response = llm.chat(message=chunk_prompt)
+    # TODO : add claude reposnse parser
+    return response
 
 def text_prompter(transcript_text, prompt, llm=None):
     chunk_size = 10000
@@ -65,6 +69,8 @@ def text_prompter(transcript_text, prompt, llm=None):
     # 400 sentence at a time
     if llm.type == LLMType.OPENAI:
         llm_caller_fn = send_msg_openai
+    elif llm.type == LLMType.GEMINI:
+        llm_caller_fn = send_msg_gemini
     else:
         # claude for now
         llm_caller_fn = send_msg_claude
@@ -110,7 +116,7 @@ def text_prompter(transcript_text, prompt, llm=None):
     # make a parallel call to all chunks with prompts
     with concurrent.futures.ThreadPoolExecutor() as executor:
         future_to_index = {
-            executor.submit(llm_caller_fn, prompt): prompt for prompt in prompts
+            executor.submit(llm_caller_fn, prompt, llm): prompt for prompt in prompts
         }
         for future in concurrent.futures.as_completed(future_to_index):
             try:
