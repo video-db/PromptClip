@@ -101,7 +101,6 @@ class LLM:
     def _call_gemini(self, message):
         genai.configure(api_key=GEMINI_KEY)
         model = genai.GenerativeModel(self.model)
-        response = model.generate_content("The opposite of hot is")
         try:
             response = model.generate_content(message)
             response_text = response.text.replace("```json", "").replace("```", "")
