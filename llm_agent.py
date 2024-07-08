@@ -25,6 +25,7 @@ class LLMType:
 class Models:
     GPT3 = "gpt-3.5-turbo-16k"
     GPT4 = "gpt-4"
+    GPT4o = "gpt-4o"
     CLAUDE_INSTANT = "claude-instant-1.1"
     CLAUDE2 = "claude-2"
     GEMINI_1_5_FLASH = "gemini-1.5-flash"

@@ -88,7 +88,7 @@ def text_prompter(transcript_text, prompt, llm=None):
           - If the matched sentences are not too far, merge them into one sentence.
           - Strictly make each result minimum 20 words long. If the match is smaller, adjust the boundries and add more context around the sentences.
 
-        - **Output Format**: Return a JSON list named 'sentences' that containes the output sentences, make sure they are exact substrings.
+        - **Output Format**: Return a JSON list of strings named 'sentences' that containes the output sentences, make sure they are exact substrings.
         - **User Prompts**: User prompts may include requests like 'find funny moments' or 'find moments for social media'. Interpret these prompts by 
         identifying keywords or themes in the transcript that match the intent of the prompt.
         """
