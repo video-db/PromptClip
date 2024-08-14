@@ -64,7 +64,7 @@ Checkout these prompts and the results 👉🏼
 - **Set `VIDEO_DB_API_KEY`:** Enter your key in the `env` file.
 - **Set `OPENAI_API_KEY` or `ANTHROPIC_KEY`:** Add your LLM API Key in the `env` file.
 - **Install dependencies:** Run `pip install -r requirements.txt` in your terminal.
-- **Run locally:**  Run the notebook `PromptClip.ipynb` and experiment with your prompts and ranking of results.
+- **Run locally:**  Run the notebook `PromptClip_text.ipynb`, `PromptClip_visual.ipynb` and `PromptClip_multimodal.ipynb` to experiment with your prompts and ranking of results.
 
 ---
 <!-- ROADMAP -->
@@ -73,7 +73,6 @@ Checkout these prompts and the results 👉🏼
 
 1. Add support for music generation models to jazzup the cuts.
 2. Integrate with other projects like Pika Labs and Midjourney.
-3. Add support for Text Overlays from VideoDB.
 
 ---
 <!-- CONTRIBUTING -->
