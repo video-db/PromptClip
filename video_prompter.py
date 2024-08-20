@@ -46,7 +46,12 @@ def chunk_docs(docs, chunk_size):
 
 
 def get_result_timestamps(
-    video, result, index_type="scene", scene_index_id=None, sort="time"
+    video,
+    result,
+    index_type="scene",
+    scene_index_id=None,
+    sort="time",
+    run_concurrent=True,
 ):
     """
     This function takes the result from scene_prompter and performs a keyword search on the video.
@@ -55,7 +60,7 @@ def get_result_timestamps(
     """
     result_timestamps = []
 
-    for description in result:
+    def search_description(description):
         # keyword search on each result description
         if index_type == "scene":
             search_res = video.search(
@@ -71,24 +76,38 @@ def get_result_timestamps(
                 search_type=SearchType.keyword,
             )
         matched_segments = search_res.get_shots()
-        # no exact match found.
         if len(matched_segments) == 0:
-            continue
+            return None  # No match found
 
-        # videoashot of matched segment
         video_shot = matched_segments[0]
+        return (video_shot.start, video_shot.end, video_shot.text)
 
-        # storing the timestamps and description
-        result_timestamps.append((video_shot.start, video_shot.end, video_shot.text))
+    if run_concurrent:
+        with concurrent.futures.ThreadPoolExecutor() as executor:
+            future_to_desc = {
+                executor.submit(search_description, desc): desc for desc in result
+            }
+            for future in concurrent.futures.as_completed(future_to_desc):
+                res = future.result()
+                if res:
+                    result_timestamps.append(res)
+    else:
+        for description in result:
+            res = search_description(description)
+            if res:
+                result_timestamps.append(res)
 
-    # sorting the result by time
-    if sort and sort == "time":
-        result_timestamps = sorted(set(result_timestamps), key=lambda x: x[0])
+    # Sorting the results if needed
+    if sort == "time":
+        result_timestamps.sort(key=lambda x: x[0])
+
     return result_timestamps
 
 
 # Creating and returning timeline of given result timestamps
-def get_clip_timeline(video, result_timestamps, timeline, top_n=None, max_duration=None, debug=False):
+def build_video_timeline(
+    video, result_timestamps, timeline, top_n=None, max_duration=None, debug=False
+):
     """
     This function takes the matched segments list (result_timestamps) and creates a VideoDB Timeline based on the given conditions.
     The user can specify top_n to select the top n results.
@@ -232,7 +251,7 @@ def text_prompter(transcript_text, prompt, llm=None):
 
 
 def scene_prompter(transcript_text, prompt, llm=None, run_concurrent=True):
-    chunk_size = 20
+    chunk_size = 100
     chunks = chunk_docs(transcript_text, chunk_size=chunk_size)
 
     llm_caller_fn = send_msg_openai
@@ -301,7 +320,7 @@ def scene_prompter(transcript_text, prompt, llm=None, run_concurrent=True):
 
 def multimodal_prompter(transcript, scene_index, prompt, llm=None, run_concurrent=True):
     docs = get_multimodal_docs(transcript, scene_index)
-    chunk_size = 20
+    chunk_size = 80
     chunks = chunk_docs(docs, chunk_size=chunk_size)
 
     if llm is None:

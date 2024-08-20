@@ -26,10 +26,12 @@ class Models:
     GPT3 = "gpt-3.5-turbo-16k"
     GPT4 = "gpt-4"
     GPT4o = "gpt-4o"
+    GPT4o_new = "gpt-4o-2024-08-06"
     CLAUDE_INSTANT = "claude-instant-1.1"
     CLAUDE2 = "claude-2"
     GEMINI_1_5_FLASH = "gemini-1.5-flash"
     GEMINI_1_5_PRO = "gemini-1.5-pro"
+    OA_MODELS_WITH_RESPONSE_TYPE_SUPPORT = [GPT4o, GPT4o_new]
 
 
 class LLM:
@@ -69,7 +71,13 @@ class LLM:
             "Content-Type": "application/json",
             "Authorization": f"Bearer {self.openai_key}",
         }
-        data = {"model": self.model, "messages": message, "temperature": 0.6}
+        data = {
+            "model": self.model,
+            "messages": message,
+            "temperature": 0.6,
+        }
+        if self.model in Models.OA_MODELS_WITH_RESPONSE_TYPE_SUPPORT:
+            data["response_format"] = {"type": "json_object"}
         if functions:
             data.update(
                 {
