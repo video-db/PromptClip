@@ -1,20 +1,16 @@
 """
 Extend this codebase to add any LLM
 """
-
 import json
 import os
 
 import requests
+from openai import OpenAI
 from anthropic import Anthropic, HUMAN_PROMPT, AI_PROMPT
 import google.generativeai as genai
 from dotenv import load_dotenv
 
 load_dotenv()
-OPENAI_KEY = os.getenv("OPENAI_API_KEY")
-CLAUDE_KEY = os.getenv("ANTHROPIC_KEY")
-GEMINI_KEY = os.getenv("GEMINI_API_KEY")
-
 
 class LLMType:
     OPENAI = "openAI"
@@ -23,33 +19,35 @@ class LLMType:
 
 
 class Models:
-    GPT3 = "gpt-3.5-turbo-16k"
-    GPT4 = "gpt-4"
     GPT4o = "gpt-4o"
-    GPT4o_new = "gpt-4o-2024-08-06"
-    CLAUDE_INSTANT = "claude-instant-1.1"
-    CLAUDE2 = "claude-2"
-    GEMINI_1_5_FLASH = "gemini-1.5-flash"
-    GEMINI_1_5_PRO = "gemini-1.5-pro"
-    OA_MODELS_WITH_RESPONSE_TYPE_SUPPORT = [GPT4o, GPT4o_new]
+    GPT4o_mini = "gpt-4o-mini"
+    GPTo3 = "o3"
+    GPTo3_mini = "o3-mini"
+
+    CLAUDE4_SONNET = "claude-sonnet-4-20250514"
+
+    GEMINI_2_5_FLASH = "gemini-2.5-flash"
+    GEMINI_2_5_PRO = "gemini-2.5-pro"
 
 
 class LLM:
-    def __init__(self, llm_type=LLMType.OPENAI, model=Models.GPT4):
+    def __init__(self, llm_type=LLMType.OPENAI, model=Models.GPT4o):
+
         self.type = llm_type
         self.model = model
         self.openai_key = os.getenv("OPENAI_API_KEY")
-        self.claude_key = os.getenv("ANTHROPIC_KEY")
-        self.gemini_key = os.getenv("GEMINI_KEY")
+        self.claude_key = os.getenv("ANTHROPIC_API_KEY")
+        self.gemini_key = os.getenv("GEMINI_API_KEY")
 
-    def chat(self, message, functions=None):
+    def chat(self, message, temperature=0.6, functions=None):
+
         if self.type == LLMType.OPENAI:
             message = [self._to_gpt_msg(message)]
-            return self._call_openai(message, functions)
+            return self._call_openai(message, temperature, functions)
         elif self.type == LLMType.CLAUDE:
-            return self._call_claude(message)
+            return self._call_claude(message, temperature)
         elif self.type == LLMType.GEMINI:
-            return self._call_gemini(message)
+            return self._call_gemini(message, temperature)
         else:
             raise ValueError("Unsupported LLM type.")
 
@@ -62,37 +60,41 @@ class LLM:
         context_msg = ""
         context_msg += str(data)
 
-        return {"role": "system", "content": context_msg}
+        return {"role": "user", "content": context_msg}
 
-    def _call_openai(self, message, functions=None):
-        url = "https://api.openai.com/v1/chat/completions"
-        # print(f'call openAI with message {message}')
-        headers = {
-            "Content-Type": "application/json",
-            "Authorization": f"Bearer {self.openai_key}",
-        }
-        data = {
+    def _call_openai(self, message, temperature=0.6, functions=None):
+
+        if not self.openai_key:
+            raise ValueError("OPENAI_API_KEY environment variable is not set.")
+        client = OpenAI(api_key=self.openai_key)
+
+        # Build the base payload
+        payload = {
             "model": self.model,
             "messages": message,
-            "temperature": 0.6,
+            "response_format": {"type": "json_object"},
         }
-        if self.model in Models.OA_MODELS_WITH_RESPONSE_TYPE_SUPPORT:
-            data["response_format"] = {"type": "json_object"}
-        if functions:
-            data.update(
-                {
-                    "functions": functions,
-                    "function_call": "auto",
-                }
-            )
 
-        response = requests.post(url, headers=headers, data=json.dumps(data))
+        if "o3" not in self.model:
+            payload.update({"temperature": temperature})
+
+        if functions:
+            payload.update({
+                "tools": functions,
+                "tool_choice": "auto",
+            })
+
         try:
-            return response.json()
+            response = client.chat.completions.create(**payload)
+            content = response.choices[0].message.content
+            return json.loads(content)
         except json.JSONDecodeError:
             return {"error": "Failed to decode JSON response."}
+        except Exception as e:
+            return {"error": str(e)}
 
-    def _call_claude(self, message):
+    def _call_claude(self, message, temperature=0.6):
+
         anthropic = Anthropic(api_key=self.claude_key)
         prompt = f"{HUMAN_PROMPT} {message} {AI_PROMPT}"
         try:
@@ -100,25 +102,45 @@ class LLM:
                 model=self.model,
                 max_tokens_to_sample=80000,
                 prompt=prompt,
+                temperature=temperature,
             )
             return {"response": completion.completion}
         except (
             Exception
-        ) as e:  # Consider a more specific exception based on the Anthropic SDK
+        ) as e:
+            print(f'call claude with error: {e}')
             return {"error": str(e)}
 
-    def _call_gemini(self, message):
-        genai.configure(api_key=GEMINI_KEY)
-        model = genai.GenerativeModel(self.model)
+    def _call_gemini(self, message, temperature=0.6):
+
+        if not self.gemini_key:
+            raise ValueError("GEMINI_API_KEY environment variable is not set.")
+
+        # Google provides an OpenAI-compatible endpoint for Gemini models (currently in beta)
+        client = OpenAI(
+            api_key=self.gemini_key,
+            base_url="https://generativelanguage.googleapis.com/v1beta/openai/",
+        )
+
+        # Ensure the message is wrapped in the expected list-of-dicts format
+        if isinstance(message, str):
+            messages = [self._to_gpt_msg(message)]
+        else:
+            messages = message  # assume already formatted
+
+        payload = {
+            "model": self.model,
+            "messages": messages,
+            "response_format": {"type": "json_object"},
+            "temperature": temperature,
+        }
+
         try:
-            response = model.generate_content(message)
-            response_text = response.text.replace("```json", "").replace("```", "")
-            response_json = json.loads(response_text)
-            return response_json.get("sentences")
+            response = client.chat.completions.create(**payload)
+            content = response.choices[0].message.content
+
+            return json.loads(content)
+        except json.JSONDecodeError:
+            return {"error": "Failed to decode JSON response."}
         except Exception as e:
             return {"error": str(e)}
-
-    def get_word_limit(self):
-        if self.type == LLMType.CLAUDE:
-            return 10000
-        return 2000
