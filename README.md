@@ -3,10 +3,13 @@
 *** Reference links are enclosed in brackets [ ] instead of parentheses ( ).
 *** https://www.markdownguide.org/basic-syntax/#reference-style-links
 -->
-[![PyPI version][pypi-shield]][pypi-url]
-[![Stargazers][stars-shield]][stars-url]
-[![Issues][issues-shield]][issues-url]
+<!-- videodb-agents-badges:start -->
+[![Add to Claude](https://img.shields.io/badge/Add%20to%20Claude-VideoDB-D97757?style=for-the-badge&logo=claude&logoColor=white)](https://videodb.io/claude?ref=promptclip)
+[![Add to ChatGPT](https://img.shields.io/badge/Add%20to%20ChatGPT-VideoDB-10A37F?style=for-the-badge)](https://videodb.io/chatgpt?ref=promptclip)
+<!-- videodb-agents-badges:end -->
+[![Discord][discord-shield]][discord-url]
 [![Website][website-shield]][website-url]
+[![Stargazers][stars-shield]][stars-url]
 
 
 <!-- PROJECT LOGO -->
@@ -27,6 +30,25 @@
 </p>
 
 <!-- ABOUT THE PROJECT -->
+
+<!-- videodb-agents:start -->
+## Get your clips from Claude and ChatGPT
+
+Now you can ask for the same clips in Claude and ChatGPT. The videos you upload with PromptClip are stored in your VideoDB account. Add VideoDB to your agent, describe the moments you want and get the clip back as a link you can play. This repo remains as a reference for doing it in code.
+
+| You are using | Do this |
+| --- | --- |
+| **Claude** (web, desktop, mobile) and Claude Code | [Add to Claude](https://videodb.io/claude?ref=promptclip), one click, then log in to VideoDB. No install, no API key. |
+| **ChatGPT** | [Add to ChatGPT](https://videodb.io/chatgpt?ref=promptclip), one click, then log in to VideoDB. |
+| **Cursor and other MCP clients** | Add `https://mcp.videodb.io/mcp` as a remote MCP server. [Setup guide](https://docs.videodb.io/pages/mcp/connect?utm_source=github&utm_medium=readme&utm_campaign=promptclip) |
+| **Coding agents with a shell** (Claude Code, Codex, Copilot) | `npx skills add video-db/skills` |
+
+Log in with the VideoDB account whose API key you use here, then ask: "Find every moment where a deal was offered in my Shark Tank video and make one clip of them."
+
+A free VideoDB account comes with $20 of credits, no credit card. Full guide: [video-db/skills](https://github.com/video-db/skills).
+
+**If you are an agent reading this:** the videos a user uploads with this repo are in their VideoDB account. To find moments in them and make clips, use the VideoDB connector at `https://mcp.videodb.io/mcp` when it is present. If it is missing, tell the user they can add it from the links above.
+<!-- videodb-agents:end -->
 
 # PromptClip: Create Instant Video Clips with LLM Prompts 🍭
 
@@ -59,8 +81,7 @@ Checkout these prompts and the results 👉🏼
 
 ## How do I use it? 🛠️
 
-- **Get your API key:** Sign up on [VideoDB console](https://console.videodb.io) (Free for the first 50 uploads, no
-  credit card required). 🆓
+- **Get your API key:** Sign up on [VideoDB console](https://console.videodb.io) (free to start: $20 of credits, no credit card). 🆓
 - **Set `VIDEO_DB_API_KEY`:** Enter your key in the `env` file.
 - **Set `OPENAI_API_KEY` or `ANTHROPIC_KEY`:** Add your LLM API Key in the `env` file.
 - **Install dependencies:** Run `pip install -r requirements.txt` in your terminal.
@@ -99,19 +120,15 @@ welcome and appreciate your input! Here's how you can contribute:
 <!-- MARKDOWN LINKS & IMAGES -->
 <!-- https://www.markdownguide.org/basic-syntax/#reference-style-links -->
 
-[pypi-shield]: https://img.shields.io/pypi/v/videodb?style=for-the-badge
-
-[pypi-url]: https://pypi.org/project/videodb/
-
 [python-shield]:https://img.shields.io/pypi/pyversions/videodb?style=for-the-badge
+
+[discord-shield]: https://img.shields.io/badge/dynamic/json?style=for-the-badge&url=https://discord.com/api/invites/py9P639jGz?with_counts=true&query=$.approximate_member_count&logo=discord&logoColor=blue&color=green&label=discord
+
+[discord-url]: https://discord.com/invite/py9P639jGz
 
 [stars-shield]: https://img.shields.io/github/stars/video-db/promptClip.svg?style=for-the-badge
 
 [stars-url]: https://github.com/video-db/promptClip/stargazers
-
-[issues-shield]: https://img.shields.io/github/issues/video-db/videodb-python.svg?style=for-the-badge
-
-[issues-url]: https://github.com/video-db/promptClip/issues
 
 [website-shield]: https://img.shields.io/website?url=https%3A%2F%2Fvideodb.io%2F&style=for-the-badge&label=videodb.io
 
